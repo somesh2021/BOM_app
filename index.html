@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parts Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f9fafb;
+            color: #111827;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        .header {
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: 0.5rem;
+            padding: 0.25rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            background: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .tab.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .tab:not(.active) {
+            color: #6b7280;
+        }
+
+        .tab:not(.active):hover {
+            background-color: #f3f4f6;
+        }
+
+        .content {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            padding: 1.5rem;
+        }
+
+        .content h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background-color: #f9fafb;
+            border-radius: 0.5rem;
+        }
+
+        .input, .select {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+
+        .btn-success {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #059669;
+        }
+
+        .btn-warning {
+            background-color: #f59e0b;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background-color: #d97706;
+        }
+
+        .btn-danger {
+            background-color: #ef4444;
+            color: white;
+            padding: 0.25rem;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 1rem;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #d1d5db;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border: 1px solid #d1d5db;
+        }
+
+        .table th {
+            background-color: #f3f4f6;
+            font-weight: 600;
+        }
+
+        .table td {
+            font-size: 0.875rem;
+        }
+
+        .subpart-item {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        .preview-section {
+            margin-top: 2rem;
+        }
+
+        .preview-section h3 {
+            font-size: 1.125rem;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .text-gray {
+            color: #6b7280;
+        }
+
+        .font-medium {
+            font-weight: 500;
+        }
+
+        .export-section {
+            text-align: left;
+        }
+
+        .export-section p {
+            margin-bottom: 1rem;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Parts Management System</h1>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <div class="tabs">
+            <button class="tab active" data-tab="database">
+                📦 Parts Database
+            </button>
+            <button class="tab" data-tab="builder">
+                ⚙️ Part Builder
+            </button>
+            <button class="tab" data-tab="checkout">
+                🛒 Checkout
+            </button>
+            <button class="tab" data-tab="export">
+                💾 Export
+            </button>
+        </div>
+
+        <!-- Parts Database Tab -->
+        <div id="database-content" class="content">
+            <h2>Parts Database</h2>
+            
+            <div class="form-row">
+                <input type="text" id="part-name" class="input" placeholder="Part name">
+                <input type="number" id="part-cost" class="input" placeholder="Cost" step="0.01">
+                <input type="text" id="part-description" class="input" placeholder="Description">
+                <button id="add-part-btn" class="btn btn-primary">
+                    ➕ Add Part
+                </button>
+            </div>
+
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Cost</th>
+                            <th>Description</th>
+                            <th>Subparts</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="parts-table-body">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Part Builder Tab -->
+        <div id="builder-content" class="content hidden">
+            <h2>Part Builder</h2>
+            <p class="text-gray">Define which parts contain which subparts</p>
+            
+            <div class="form-row">
+                <select id="parent-part" class="select">
+                    <option value="">Select parent part</option>
+                </select>
+                <select id="child-part" class="select">
+                    <option value="">Select subpart</option>
+                </select>
+                <input type="number" id="relationship-quantity" class="input" placeholder="Quantity" min="1" value="1">
+                <button id="add-relationship-btn" class="btn btn-success">
+                    ➕ Add Relationship
+                </button>
+            </div>
+
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Parent Part</th>
+                            <th>Contains</th>
+                            <th>Quantity</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="relationships-table-body">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Checkout Tab -->
+        <div id="checkout-content" class="content hidden">
+            <h2>Checkout</h2>
+            
+            <div class="form-row">
+                <select id="checkout-part" class="select">
+                    <option value="">Select part</option>
+                </select>
+                <input type="number" id="checkout-quantity" class="input" placeholder="Quantity" min="1" value="1">
+                <button id="add-checkout-btn" class="btn btn-warning">
+                    🛒 Add to Checkout
+                </button>
+            </div>
+
+            <div class="preview-section">
+                <h3>Items in Checkout</h3>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Part</th>
+                                <th>Quantity</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="checkout-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="requirements-section" class="preview-section hidden">
+                <h3>🧮 Total Requirements (All Subparts Included)</h3>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr style="background-color: #dbeafe;">
+                                <th>Part</th>
+                                <th>Total Quantity</th>
+                                <th>Unit Cost</th>
+                                <th>Total Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody id="requirements-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Export Tab -->
+        <div id="export-content" class="content hidden">
+            <h2>Export</h2>
+            <div class="export-section">
+                <p id="export-message" class="text-gray">Add items to checkout to generate a CSV export.</p>
+                <button id="export-csv-btn" class="btn btn-success hidden">
+                    💾 Download CSV
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let parts = [];
+        let partRelationships = [];
+        let checkout = [];
+        let activeTab = 'database';
+
+        // Utility functions
+        function generateId() {
+            return Date.now().toString();
+        }
+
+        function getPartById(id) {
+            return parts.find(p => p.id === id);
+        }
+
+        function getPartName(id) {
+            const part = getPartById(id);
+            return part ? part.name : 'Unknown';
+        }
+
+        function getChildren(partId) {
+            return partRelationships.filter(rel => rel.parentId === partId);
+        }
+
+        // Recursive subparts calculation
+        function getSubpartsRecursive(partId, multiplier = 1) {
+            const result = new Map();
+            
+            // Add the part itself
+            result.set(partId, (result.get(partId) || 0) + multiplier);
+            
+            // Find all direct children
+            const children = partRelationships.filter(rel => rel.parentId === partId);
+            
+            // Recursively add children
+            children.forEach(child => {
+                const childSubparts = getSubpartsRecursive(child.childId, multiplier * child.quantity);
+                childSubparts.forEach((quantity, childPartId) => {
+                    result.set(childPartId, (result.get(childPartId) || 0) + quantity);
+                });
+            });
+            
+            return result;
+        }
+
+        function calculateTotalRequirements() {
+            const totalRequirements = new Map();
+            
+            checkout.forEach(item => {
+                const requirements = getSubpartsRecursive(item.partId, item.quantity);
+                requirements.forEach((quantity, partId) => {
+                    totalRequirements.set(partId, (totalRequirements.get(partId) || 0) + quantity);
+                });
+            });
+            
+            return totalRequirements;
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            // Update active tab
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+            // Show/hide content
+            document.querySelectorAll('.content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(`${tabName}-content`).classList.remove('hidden');
+
+            activeTab = tabName;
+            
+            // Update dropdowns when switching tabs
+            updateDropdowns();
+        }
+
+        // Update dropdowns
+        function updateDropdowns() {
+            const parentSelect = document.getElementById('parent-part');
+            const childSelect = document.getElementById('child-part');
+            const checkoutSelect = document.getElementById('checkout-part');
+
+            // Clear options
+            [parentSelect, childSelect, checkoutSelect].forEach(select => {
+                select.innerHTML = '<option value="">' + select.children[0].textContent + '</option>';
+            });
+
+            // Populate with parts
+            parts.forEach(part => {
+                const option1 = new Option(part.name, part.id);
+                const option2 = new Option(part.name, part.id);
+                const option3 = new Option(part.name, part.id);
+                
+                parentSelect.appendChild(option1);
+                childSelect.appendChild(option2);
+                checkoutSelect.appendChild(option3);
+            });
+        }
+
+        // Render functions
+        function renderPartsTable() {
+            const tbody = document.getElementById('parts-table-body');
+            tbody.innerHTML = '';
+
+            parts.forEach(part => {
+                const children = getChildren(part.id);
+                const subpartsHtml = children.map(rel => 
+                    `<div class="subpart-item">${rel.quantity}x ${getPartName(rel.childId)}</div>`
+                ).join('');
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="font-medium">${part.name}</td>
+                    <td>$${part.cost.toFixed(2)}</td>
+                    <td>${part.description}</td>
+                    <td>${subpartsHtml}</td>
+                    <td>
+                        <button class="btn btn-danger" onclick="deletePart('${part.id}')">
+                            🗑️
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderRelationshipsTable() {
+            const tbody = document.getElementById('relationships-table-body');
+            tbody.innerHTML = '';
+
+            partRelationships.forEach(rel => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="font-medium">${getPartName(rel.parentId)}</td>
+                    <td>${getPartName(rel.childId)}</td>
+                    <td>${rel.quantity}</td>
+                    <td>
+                        <button class="btn btn-danger" onclick="deleteRelationship('${rel.id}')">
+                            🗑️
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderCheckoutTable() {
+            const tbody = document.getElementById('checkout-table-body');
+            tbody.innerHTML = '';
+
+            checkout.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="font-medium">${getPartName(item.partId)}</td>
+                    <td>${item.quantity}</td>
+                    <td>
+                        <button class="btn btn-danger" onclick="deleteCheckoutItem('${item.id}')">
+                            🗑️
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderRequirementsTable() {
+            const section = document.getElementById('requirements-section');
+            const tbody = document.getElementById('requirements-table-body');
+            
+            if (checkout.length === 0) {
+                section.classList.add('hidden');
+                return;
+            }
+
+            section.classList.remove('hidden');
+            tbody.innerHTML = '';
+
+            const requirements = calculateTotalRequirements();
+            
+            requirements.forEach((quantity, partId) => {
+                const part = getPartById(partId);
+                if (part) {
+                    const totalCost = part.cost * quantity;
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="font-medium">${part.name}</td>
+                        <td>${quantity}</td>
+                        <td>$${part.cost.toFixed(2)}</td>
+                        <td class="font-medium">$${totalCost.toFixed(2)}</td>
+                    `;
+                    tbody.appendChild(row);
+                }
+            });
+        }
+
+        function updateExportButton() {
+            const message = document.getElementById('export-message');
+            const button = document.getElementById('export-csv-btn');
+            
+            if (checkout.length === 0) {
+                message.textContent = 'Add items to checkout to generate a CSV export.';
+                button.classList.add('hidden');
+            } else {
+                message.textContent = 'Export a CSV file containing all parts and subparts with calculated quantities and costs.';
+                button.classList.remove('hidden');
+            }
+        }
+
+        // CRUD operations
+        function addPart() {
+            const name = document.getElementById('part-name').value.trim();
+            const cost = parseFloat(document.getElementById('part-cost').value);
+            const description = document.getElementById('part-description').value.trim();
+
+            if (!name || isNaN(cost)) {
+                alert('Please enter a valid name and cost');
+                return;
+            }
+
+            const part = {
+                id: generateId(),
+                name,
+                cost,
+                description
+            };
+
+            parts.push(part);
+            
+            // Clear form
+            document.getElementById('part-name').value = '';
+            document.getElementById('part-cost').value = '';
+            document.getElementById('part-description').value = '';
+
+            renderPartsTable();
+            updateDropdowns();
+        }
+
+        function deletePart(id) {
+            parts = parts.filter(p => p.id !== id);
+            partRelationships = partRelationships.filter(r => r.parentId !== id && r.childId !== id);
+            checkout = checkout.filter(c => c.partId !== id);
+            
+            renderPartsTable();
+            renderRelationshipsTable();
+            renderCheckoutTable();
+            renderRequirementsTable();
+            updateDropdowns();
+            updateExportButton();
+        }
+
+        function addRelationship() {
+            const parentId = document.getElementById('parent-part').value;
+            const childId = document.getElementById('child-part').value;
+            const quantity = parseInt(document.getElementById('relationship-quantity').value);
+
+            if (!parentId || !childId || parentId === childId || isNaN(quantity) || quantity < 1) {
+                alert('Please select different parent and child parts with a valid quantity');
+                return;
+            }
+
+            const relationship = {
+                id: generateId(),
+                parentId,
+                childId,
+                quantity
+            };
+
+            partRelationships.push(relationship);
+            
+            // Clear form
+            document.getElementById('parent-part').value = '';
+            document.getElementById('child-part').value = '';
+            document.getElementById('relationship-quantity').value = '1';
+
+            renderRelationshipsTable();
+            renderPartsTable(); // Update to show subparts
+        }
+
+        function deleteRelationship(id) {
+            partRelationships = partRelationships.filter(r => r.id !== id);
+            renderRelationshipsTable();
+            renderPartsTable();
+            renderRequirementsTable();
+        }
+
+        function addToCheckout() {
+            const partId = document.getElementById('checkout-part').value;
+            const quantity = parseInt(document.getElementById('checkout-quantity').value);
+
+            if (!partId || isNaN(quantity) || quantity < 1) {
+                alert('Please select a part and enter a valid quantity');
+                return;
+            }
+
+            const item = {
+                id: generateId(),
+                partId,
+                quantity
+            };
+
+            checkout.push(item);
+            
+            // Clear form
+            document.getElementById('checkout-part').value = '';
+            document.getElementById('checkout-quantity').value = '1';
+
+            renderCheckoutTable();
+            renderRequirementsTable();
+            updateExportButton();
+        }
+
+        function deleteCheckoutItem(id) {
+            checkout = checkout.filter(c => c.id !== id);
+            renderCheckoutTable();
+            renderRequirementsTable();
+            updateExportButton();
+        }
+
+        function generateCSV() {
+            const requirements = calculateTotalRequirements();
+            let csv = 'Part Name,Quantity,Unit Cost,Total Cost,Description\n';
+            
+            let grandTotal = 0;
+            
+            requirements.forEach((quantity, partId) => {
+                const part = getPartById(partId);
+                if (part) {
+                    const totalCost = part.cost * quantity;
+                    grandTotal += totalCost;
+                    csv += `"${part.name}",${quantity},${part.cost.toFixed(2)},${totalCost.toFixed(2)},"${part.description}"\n`;
+                }
+            });
+            
+            csv += `\nTotal Cost:,,,${grandTotal.toFixed(2)},`;
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'parts-list.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    switchTab(this.dataset.tab);
+                });
+            });
+
+            // Form submissions
+            document.getElementById('add-part-btn').addEventListener('click', addPart);
+            document.getElementById('add-relationship-btn').addEventListener('click', addRelationship);
+            document.getElementById('add-checkout-btn').addEventListener('click', addToCheckout);
+            document.getElementById('export-csv-btn').addEventListener('click', generateCSV);
+
+            // Enter key submissions
+            document.getElementById('part-name').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') addPart();
+            });
+            document.getElementById('part-cost').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') addPart();
+            });
+            document.getElementById('part-description').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') addPart();
+            });
+
+            // Initial render
+            renderPartsTable();
+            updateExportButton();
+        });
+    </script>
+</body>
+</html>
